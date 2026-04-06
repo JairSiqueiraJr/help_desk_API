@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app import models, schemas
 
 
@@ -107,3 +108,69 @@ def update_chamado_status(
     db.commit()
     db.refresh(chamado)
     return chamado
+
+
+def get_dashboard_resumo(db: Session):
+    """
+    Retorna o resumo analítico principal do dashboard.
+
+    Estratégia:
+        - consulta diretamente a tabela de chamados para métricas operacionais
+        - consulta a view vw_sla_chamados para métricas de SLA e tempo médio
+
+    Returns:
+        dict:
+            Estrutura compatível com o schema DashboardResumoResponse.
+    """
+    query = text("""
+        SELECT
+            (SELECT COUNT(*) FROM chamados) AS total_chamados,
+
+            (SELECT COUNT(*)
+             FROM chamados c
+             INNER JOIN status s ON c.status_id = s.id
+             WHERE LOWER(s.nome) = 'aberto') AS chamados_abertos,
+
+            (SELECT COUNT(*)
+             FROM chamados c
+             INNER JOIN status s ON c.status_id = s.id
+             WHERE LOWER(s.nome) = 'em atendimento') AS chamados_em_atendimento,
+
+            (SELECT COUNT(*)
+             FROM chamados c
+             INNER JOIN status s ON c.status_id = s.id
+             WHERE LOWER(s.nome) IN ('fechado', 'resolvido')) AS chamados_fechados,
+
+            (SELECT COALESCE(
+                ROUND(
+                    SUM(CASE WHEN status_sla = 'Dentro do SLA' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0),
+                    2
+                ),
+                0
+            )
+             FROM vw_sla_chamados) AS percentual_dentro_sla,
+
+            (SELECT COALESCE(
+                ROUND(
+                    SUM(CASE WHEN status_sla = 'Fora do SLA' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0),
+                    2
+                ),
+                0
+            )
+             FROM vw_sla_chamados) AS percentual_fora_sla,
+
+            (SELECT COALESCE(ROUND(AVG(tempo_real_horas), 2), 0)
+             FROM vw_sla_chamados) AS tempo_medio_horas
+    """)
+
+    resultado = db.execute(query).mappings().first()
+
+    return {
+        "total_chamados": int(resultado["total_chamados"] or 0),
+        "chamados_abertos": int(resultado["chamados_abertos"] or 0),
+        "chamados_em_atendimento": int(resultado["chamados_em_atendimento"] or 0),
+        "chamados_fechados": int(resultado["chamados_fechados"] or 0),
+        "percentual_dentro_sla": float(resultado["percentual_dentro_sla"] or 0),
+        "percentual_fora_sla": float(resultado["percentual_fora_sla"] or 0),
+        "tempo_medio_horas": float(resultado["tempo_medio_horas"] or 0),
+    }

@@ -74,3 +74,49 @@ class ChamadoResponse(BaseModel):
     atualizado_em: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+
+class ChamadoStatusUpdate(BaseModel):
+    """
+    Schema de entrada para atualização operacional de status de um chamado.
+
+    Campos:
+        status_id:
+            Identificador do novo status do chamado.
+        tecnico_id:
+            Identificador do técnico responsável pela alteração.
+            Campo opcional, mas recomendado para rastreabilidade operacional.
+    """
+    status_id: int
+    tecnico_id: int | None = None
+
+
+
+class DashboardResumoResponse(BaseModel):
+    """
+    Schema de resposta para o resumo analítico do dashboard.
+
+    Campos:
+        total_chamados:
+            Quantidade total de chamados cadastrados.
+        chamados_abertos:
+            Quantidade de chamados atualmente abertos.
+        chamados_em_atendimento:
+            Quantidade de chamados em atendimento.
+        chamados_fechados:
+            Quantidade de chamados encerrados.
+        percentual_dentro_sla:
+            Percentual de chamados dentro do SLA.
+        percentual_fora_sla:
+            Percentual de chamados fora do SLA.
+        tempo_medio_horas:
+            Tempo médio real de atendimento em horas.
+    """
+    total_chamados: int
+    chamados_abertos: int
+    chamados_em_atendimento: int
+    chamados_fechados: int
+    percentual_dentro_sla: float
+    percentual_fora_sla: float
+    tempo_medio_horas: float
