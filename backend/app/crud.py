@@ -115,8 +115,10 @@ def get_dashboard_resumo(db: Session):
     Retorna o resumo analítico principal do dashboard.
 
     Estratégia:
-        - consulta diretamente a tabela de chamados para métricas operacionais
-        - consulta a view vw_sla_chamados para métricas de SLA e tempo médio
+        - usa a tabela 'chamados' para contagem operacional por status
+        - usa a view 'vw_sla_chamados' para indicadores de SLA
+        - calcula tempo médio apenas sobre chamados concluídos
+          (status Resolvido ou Fechado), evitando distorção com chamados ainda abertos
 
     Returns:
         dict:
@@ -126,41 +128,57 @@ def get_dashboard_resumo(db: Session):
         SELECT
             (SELECT COUNT(*) FROM chamados) AS total_chamados,
 
-            (SELECT COUNT(*)
-             FROM chamados c
-             INNER JOIN status s ON c.status_id = s.id
-             WHERE LOWER(s.nome) = 'aberto') AS chamados_abertos,
+            (
+                SELECT COUNT(*)
+                FROM chamados
+                WHERE status_id = 1
+            ) AS chamados_abertos,
 
-            (SELECT COUNT(*)
-             FROM chamados c
-             INNER JOIN status s ON c.status_id = s.id
-             WHERE LOWER(s.nome) = 'em atendimento') AS chamados_em_atendimento,
+            (
+                SELECT COUNT(*)
+                FROM chamados
+                WHERE status_id = 2
+            ) AS chamados_em_atendimento,
 
-            (SELECT COUNT(*)
-             FROM chamados c
-             INNER JOIN status s ON c.status_id = s.id
-             WHERE LOWER(s.nome) IN ('fechado', 'resolvido')) AS chamados_fechados,
+            (
+                SELECT COUNT(*)
+                FROM chamados
+                WHERE status_id IN (3, 4)
+            ) AS chamados_fechados,
 
-            (SELECT COALESCE(
-                ROUND(
-                    SUM(CASE WHEN status_sla = 'Dentro do SLA' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0),
-                    2
-                ),
-                0
-            )
-             FROM vw_sla_chamados) AS percentual_dentro_sla,
+            (
+                SELECT COALESCE(
+                    ROUND(
+                        SUM(CASE WHEN status_sla = 'Dentro do SLA' THEN 1 ELSE 0 END) * 100.0
+                        / NULLIF(COUNT(*), 0),
+                        2
+                    ),
+                    0
+                )
+                FROM vw_sla_chamados
+            ) AS percentual_dentro_sla,
 
-            (SELECT COALESCE(
-                ROUND(
-                    SUM(CASE WHEN status_sla = 'Fora do SLA' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0),
-                    2
-                ),
-                0
-            )
-             FROM vw_sla_chamados) AS percentual_fora_sla,
+            (
+                SELECT COALESCE(
+                    ROUND(
+                        SUM(CASE WHEN status_sla = 'Fora do SLA' THEN 1 ELSE 0 END) * 100.0
+                        / NULLIF(COUNT(*), 0),
+                        2
+                    ),
+                    0
+                )
+                FROM vw_sla_chamados
+            ) AS percentual_fora_sla,
 
-            (SELECT COALESCE(ROUND(AVG(tempo_real_horas), 2), 0)
-             FROM vw_sla_chamados) AS tempo_medio_horas
+            (
+                SELECT COALESCE(
+                    ROUND(AVG(v.tempo_real_horas), 2),
+                    0
+                )
+                FROM vw_sla_chamados v
+                INNER JOIN chamados c ON c.id = v.chamado_id
+                WHERE c.status_id IN (3, 4)
+            ) AS tempo_medio_horas
     """)
 
     resultado = db.execute(query).mappings().first()

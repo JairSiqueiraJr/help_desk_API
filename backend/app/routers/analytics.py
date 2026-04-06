@@ -11,6 +11,10 @@ router = APIRouter(prefix="/analytics", tags=["Analytics"])
 def listar_sla(db: Session = Depends(get_db)):
     """
     Retorna a listagem analítica de SLA por chamado.
+
+    Returns:
+        list[SlaChamadoResponse]:
+            Lista de chamados enriquecida com métricas de SLA.
     """
     try:
         return crud.get_sla_chamados(db)
@@ -34,7 +38,11 @@ def obter_dashboard_resumo(db: Session = Depends(get_db)):
 
     Returns:
         DashboardResumoResponse:
-            Estrutura agregada para consumo por frontend ou ferramentas analíticas.
+            Estrutura consolidada para consumo por frontend, dashboards ou BI.
+
+    Raises:
+        HTTPException(500):
+            Retornada em caso de erro inesperado na consulta analítica.
     """
     try:
         return crud.get_dashboard_resumo(db)
