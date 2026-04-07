@@ -74,3 +74,59 @@ class ChamadoResponse(BaseModel):
     atualizado_em: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class DashboardResumoResponse(BaseModel):
+    """
+    Schema de resposta para o resumo analítico do dashboard.
+    """
+    total_chamados: int
+    chamados_abertos: int
+    chamados_em_atendimento: int
+    chamados_fechados: int
+    percentual_dentro_sla: float
+    percentual_fora_sla: float
+    tempo_medio_horas: float
+
+
+class DashboardCategoriaItem(BaseModel):
+    """
+    Item de agregação por categoria.
+    """
+    categoria: str
+    total_chamados: int
+
+
+class DashboardSlaCategoriaItem(BaseModel):
+    """
+    Item de SLA agregado por categoria.
+    """
+    categoria: str
+    percentual_dentro_sla: float
+    percentual_fora_sla: float
+
+
+class DashboardTecnicoRankingItem(BaseModel):
+    """
+    Item de ranking de técnicos por volume de chamados atribuídos.
+    """
+    tecnico_id: int
+    tecnico_nome: str
+    total_chamados: int
+
+
+class DashboardDetalhadoResponse(BaseModel):
+    """
+    Estrutura de resposta do dashboard detalhado.
+
+    Blocos:
+        chamados_por_categoria:
+            Distribuição de volume por categoria.
+        sla_por_categoria:
+            Indicadores percentuais de SLA agrupados por categoria.
+        ranking_tecnicos:
+            Ranking de técnicos por quantidade de chamados atribuídos.
+    """
+    chamados_por_categoria: list[DashboardCategoriaItem]
+    sla_por_categoria: list[DashboardSlaCategoriaItem]
+    ranking_tecnicos: list[DashboardTecnicoRankingItem]
