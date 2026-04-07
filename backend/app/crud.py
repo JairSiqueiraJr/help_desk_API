@@ -109,11 +109,106 @@ def update_chamado_status(
     db.refresh(chamado)
     return chamado
 
+def get_dashboard_resumo(db: Session):
+    """
+    Retorna o resumo executivo do dashboard analítico.
 
-def _build_chamados_filters(status_id=None, categoria_id=None, tecnico_id=None):
+    Estratégia:
+        - usa a tabela 'chamados' para métricas operacionais por status
+        - usa a view 'vw_sla_chamados' para métricas de SLA
+        - calcula o tempo médio apenas sobre chamados concluídos
+          (status Resolvido ou Fechado)
+
+    Returns:
+        dict:
+            Estrutura compatível com DashboardResumoResponse.
+    """
+    query = text("""
+        SELECT
+            (SELECT COUNT(*) FROM chamados) AS total_chamados,
+
+            (
+                SELECT COUNT(*)
+                FROM chamados
+                WHERE status_id = 1
+            ) AS chamados_abertos,
+
+            (
+                SELECT COUNT(*)
+                FROM chamados
+                WHERE status_id = 2
+            ) AS chamados_em_atendimento,
+
+            (
+                SELECT COUNT(*)
+                FROM chamados
+                WHERE status_id IN (3, 4)
+            ) AS chamados_fechados,
+
+            (
+                SELECT COALESCE(
+                    ROUND(
+                        SUM(CASE WHEN status_sla = 'Dentro do SLA' THEN 1 ELSE 0 END) * 100.0
+                        / NULLIF(COUNT(*), 0),
+                        2
+                    ),
+                    0
+                )
+                FROM vw_sla_chamados
+            ) AS percentual_dentro_sla,
+
+            (
+                SELECT COALESCE(
+                    ROUND(
+                        SUM(CASE WHEN status_sla = 'Fora do SLA' THEN 1 ELSE 0 END) * 100.0
+                        / NULLIF(COUNT(*), 0),
+                        2
+                    ),
+                    0
+                )
+                FROM vw_sla_chamados
+            ) AS percentual_fora_sla,
+
+            (
+                SELECT COALESCE(
+                    ROUND(AVG(v.tempo_real_horas), 2),
+                    0
+                )
+                FROM vw_sla_chamados v
+                INNER JOIN chamados c ON c.id = v.chamado_id
+                WHERE c.status_id IN (3, 4)
+            ) AS tempo_medio_horas
+    """)
+
+    resultado = db.execute(query).mappings().first()
+
+    return {
+        "total_chamados": int(resultado["total_chamados"] or 0),
+        "chamados_abertos": int(resultado["chamados_abertos"] or 0),
+        "chamados_em_atendimento": int(resultado["chamados_em_atendimento"] or 0),
+        "chamados_fechados": int(resultado["chamados_fechados"] or 0),
+        "percentual_dentro_sla": float(resultado["percentual_dentro_sla"] or 0),
+        "percentual_fora_sla": float(resultado["percentual_fora_sla"] or 0),
+        "tempo_medio_horas": float(resultado["tempo_medio_horas"] or 0),
+    }
+
+
+
+def _build_chamados_filters(status_id=None, categoria_id=None, tecnico_id=None, data_inicio=None, data_fim=None):
     """
     Monta dinamicamente cláusulas SQL e parâmetros para filtros sobre a tabela
     de chamados.
+
+    Filtros suportados:
+        - status_id
+        - categoria_id
+        - tecnico_id
+        - data_inicio
+        - data_fim
+
+    Regras:
+        - data_inicio: inclui chamados com criado_em >= data informada
+        - data_fim: inclui chamados com criado_em <= data informada
 
     Args:
         status_id:
@@ -122,11 +217,14 @@ def _build_chamados_filters(status_id=None, categoria_id=None, tecnico_id=None):
             Identificador da categoria do chamado.
         tecnico_id:
             Identificador do técnico responsável.
+        data_inicio:
+            Data inicial no formato YYYY-MM-DD.
+        data_fim:
+            Data final no formato YYYY-MM-DD.
 
     Returns:
         tuple[str, dict]:
-            - cláusula SQL pronta para ser concatenada ao WHERE
-            - dicionário de parâmetros para bind seguro
+            Cláusula WHERE pronta + parâmetros para bind seguro.
     """
     filtros = []
     params = {}
@@ -142,7 +240,14 @@ def _build_chamados_filters(status_id=None, categoria_id=None, tecnico_id=None):
     if tecnico_id is not None:
         filtros.append("c.tecnico_id = :tecnico_id")
         params["tecnico_id"] = tecnico_id
+    
+    if data_inicio is not None:
+        filtros.append("DATE(c.criado_em) >= :data_inicio")
+        params["data_inicio"] = data_inicio
 
+    if data_fim is not None:
+        filtros.append("DATE(c.criado_em) <= :data_fim")
+        params["data_fim"] = data_fim
     where_clause = ""
     if filtros:
         where_clause = " WHERE " + " AND ".join(filtros)
@@ -154,15 +259,20 @@ def get_dashboard_detalhado(
     db: Session,
     status_id: int | None = None,
     categoria_id: int | None = None,
-    tecnico_id: int | None = None
+    tecnico_id: int | None = None,
+    data_inicio: str | None = None,
+    data_fim: str | None = None
 ):
     """
-    Retorna dados detalhados do dashboard com suporte a filtros operacionais.
+    Retorna dados detalhados do dashboard com suporte a filtros operacionais
+    e temporais.
 
     Filtros suportados:
         - status_id
         - categoria_id
         - tecnico_id
+        - data_inicio
+        - data_fim
 
     Blocos retornados:
         - chamados_por_categoria
@@ -170,9 +280,9 @@ def get_dashboard_detalhado(
         - ranking_tecnicos
 
     Estratégia:
-        - usa a tabela 'chamados' como base de filtro
+        - usa a tabela 'chamados' como base principal de filtros
         - cruza com categorias, usuários e a view 'vw_sla_chamados'
-        - mantém COALESCE para evitar quebra analítica por dados incompletos
+        - mantém COALESCE para preservar leitura analítica mesmo com dados incompletos
 
     Args:
         db:
@@ -183,6 +293,10 @@ def get_dashboard_detalhado(
             Filtro opcional por categoria.
         tecnico_id:
             Filtro opcional por técnico responsável.
+        data_inicio:
+            Filtro opcional de data inicial (YYYY-MM-DD).
+        data_fim:
+            Filtro opcional de data final (YYYY-MM-DD).
 
     Returns:
         dict:
@@ -191,7 +305,9 @@ def get_dashboard_detalhado(
     where_clause, params = _build_chamados_filters(
         status_id=status_id,
         categoria_id=categoria_id,
-        tecnico_id=tecnico_id
+        tecnico_id=tecnico_id,
+        data_inicio=data_inicio,
+        data_fim=data_fim
     )
 
     # ---------------------------------------------------------------------
