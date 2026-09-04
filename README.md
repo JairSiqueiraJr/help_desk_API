@@ -1,7 +1,7 @@
 <h1>🚀 ClickTech HelpDesk </h1>
-Sistema de gerenciamento de chamados de suporte técnico desenvolvido com foco em simular um ambiente real de Help Desk corporativo.
+Sistema de gerenciamento de chamados de suporte técnico desenvolvido para simular um ambiente corporativo real de Help Desk.
 
-O projeto tem como objetivo aplicar, na prática, conceitos de desenvolvimento de software, APIs, bancos de dados, gerenciamento de chamados, rastreamento de eventos e análise de dados.
+O projeto está sendo desenvolvido de forma incremental, começando pela modelagem do banco de dados e gerenciamento do ciclo de vida dos chamados, com evolução planejada para uma arquitetura completa baseada em API REST, autenticação, containers, dashboards e cloud.
 
 > 📌 Projeto em desenvolvimento contínuo, com novas funcionalidades e tecnologias planejadas para as próximas etapas.
 
@@ -71,12 +71,37 @@ O projeto também foi pensado como uma aplicação demonstrativa para estudantes
 
 ---
 
-<h1>🔹 Controle de status</h1>
+<h1>📌 Status atual</h1>
 
-O sistema trabalha com o ciclo de vida dos chamados através de diferentes estados.
+Em desenvolvimento 🚧
 
-Exemplo:
-
+✅ Implementado
+Modelagem inicial do banco de dados
+Cadastro e gerenciamento de chamados
+Controle de status
+Histórico de alterações de status
+Trigger para registro automático das mudanças
+Consultas SQL para acompanhamento dos chamados
+Estruturação inicial pensando em métricas e BI
+🔨 Em desenvolvimento
+Usuários e técnicos
+Atribuição de chamados
+API REST com FastAPI
+SQLAlchemy
+Pydantic
+Organização em camadas
+Testes automatizados
+🔮 Roadmap
+JWT e controle de permissões
+Docker e Docker Compose
+React
+Dashboard operacional
+Indicadores de SLA
+Power BI
+CI/CD
+GitHub Actions
+Deploy em Cloud/AWS
+Monitoramento e observabilidade
 ```text
 Aberto
    ↓
@@ -88,7 +113,7 @@ Resolvido
    ↓
 Fechado
 ```
-O sistema possui estrutura para registrar as alterações realizadas nos status dos chamados.
+Isso cria uma base para, futuramente, calcular tempo por status, tempo de resolução e indicadores de SLA.
 
 <h1>🔹 Histórico de alterações</h1>
 
@@ -155,50 +180,19 @@ A evolução do projeto está planejada para utilizar uma arquitetura baseada em
                     └─────────────────────┘
 
 <h1>🛠️ Tecnologias utilizadas</h1>
-Backend
-Python
+| Tecnologia | Status                        |
+| ---------- | ----------------------------- |
+| SQL        | ✅ Utilizado                   |
+| PostgreSQL | 🔨 Em desenvolvimento         |
+| Python     | 🔨 Em desenvolvimento         |
+| FastAPI    | 🔨 Planejado/Em implementação |
+| SQLAlchemy | 🔨 Planejado/Em implementação |
+| Docker     | 🔮 Roadmap                    |
+| React      | 🔮 Roadmap                    |
+| Power BI   | 🔮 Roadmap                    |
+| AWS        | 🔮 Roadmap                    |
+| Git/GitHub | ✅ Utilizado                   |
 
-Linguagem principal planejada para desenvolvimento do backend.
-
-Utilizada pela flexibilidade, produtividade e amplo ecossistema para desenvolvimento de APIs, automações e soluções orientadas a dados.
-
-FastAPI
-
-Framework planejado para construção da API REST do sistema.
-
-Principais objetivos:
-
-Criação de endpoints;
-Validação de dados;
-Documentação automática;
-Integração com banco de dados;
-Desenvolvimento de serviços backend.
-
-<h1>Banco de dados</h1>
-<h1>MySql</h1>
-
-Banco de dados relacional planejado como principal banco da aplicação.
-
-Será utilizado para armazenar:
-
-Usuários;
-Técnicos;
-Chamados;
-Status;
-Histórico;
-Categorias;
-Informações relacionadas ao atendimento.
-SQL
-
-Utilizado para:
-
-Consultas;
-Inserções;
-Atualizações;
-Relacionamentos;
-Análises;
-Criação de estruturas;
-Desenvolvimento de consultas para indicadores.
 
 <h1>ORM
 SQLAlchemy</h1>
