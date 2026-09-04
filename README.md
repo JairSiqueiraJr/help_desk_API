@@ -2,8 +2,7 @@
 Sistema de gerenciamento de chamados de suporte técnico desenvolvido com foco em simular um ambiente real de Help Desk corporativo.
 
 O projeto tem como objetivo aplicar, na prática, conceitos de desenvolvimento de software, APIs, bancos de dados, gerenciamento de chamados, rastreamento de eventos e análise de dados.
-
-> 📌 Projeto em desenvolvimento contínuo, com novas funcionalidades e tecnologias planejadas para as próximas etapas.
+📌 Projeto em desenvolvimento contínuo, com novas funcionalidades e tecnologias planejadas para as próximas etapas.
 
 ---
 
