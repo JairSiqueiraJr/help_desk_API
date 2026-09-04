@@ -502,16 +502,3 @@ A licença definitiva será definida conforme a evolução do projeto.
 
 ⭐ Se este projeto for útil para você, considere deixar uma estrela no repositório!
 
-### Uma mudança importante que fiz
-
-Eu **não colocaria no README que todas essas tecnologias já estão implementadas**. Isso é importante para sua credibilidade em entrevistas.
-
-Por exemplo, o histórico de status e trigger que **já construímos** pode ser marcado como `[x]`, enquanto FastAPI, Docker, React, AWS etc. ficam como `[ ]` até realmente entrarem no projeto.
-
-Isso permite que, em uma entrevista, você consiga dizer:
-
-> **"O ClickTech HelpDesk está sendo desenvolvido incrementalmente. A primeira etapa foi a modelagem do banco e controle do ciclo de vida dos chamados. A próxima etapa é transformar essa estrutura em uma API REST com FastAPI."**
-
-Essa narrativa é **muito mais forte** do que apresentar um README dizendo que você domina 20 tecnologias que ainda não implementou.
-
-E, principalmente, eu manteria o **ClickTech HelpDesk como o projeto principal do seu portfólio**, enquanto avançamos nele de verdade.
