@@ -307,39 +307,43 @@ Exemplos de indicadores:
                        ▼
                     Dashboard
 
-🚧 Tecnologias e funcionalidades futuras
+<h1>🚧 Tecnologias e funcionalidades futuras</h1>
 
 O projeto está planejado para evoluir gradualmente.
 
-Backend
+<h2>Backend</h2>
  FastAPI
  SQLAlchemy
  Pydantic
  Alembic
  JWT
  Pytest
-Banco de dados
+<h2>Banco de dados</h2>
  SQL
  Modelagem relacional
+
+
+
+ 
  Histórico de alterações
  PostgreSQL em ambiente containerizado
  Índices e otimização de consultas
  Views para relatórios
-Infraestrutura
+<h2>Infraestrutura</h2>
  Docker
  Docker Compose
  Linux
  CI/CD
  GitHub Actions
  Deploy em Cloud
-Frontend
+<h2>Frontend</h2>
  React
  Interface responsiva
  Dashboard
  Tela de chamados
  Tela de usuários
  Tela de técnicos
-Dados / BI
+<h2>Dados / BI</h2>
  Power BI
  Indicadores de SLA
  Tempo médio de resolução
@@ -347,7 +351,7 @@ Dados / BI
  Dashboard operacional
 Cloud
 
-Possíveis tecnologias futuras:
+<h2>Possíveis tecnologias futuras:</h2>
 
  AWS
  Serviços gerenciados de banco de dados
@@ -355,3 +359,61 @@ Possíveis tecnologias futuras:
  Monitoramento
  Storage
  CI/CD em ambiente cloud
+
+
+<h1>📋 Requisitos</h1>
+
+Para executar o projeto futuramente em ambiente local, serão necessários:
+
+<h1>Obrigatórios</h1>
+Python 3.11+
+PostgreSQL
+Git
+<h1>Recomendados</h1>
+Docker
+Docker Compose
+Visual Studio Code
+Postman ou Insomnia
+
+<h1>🚀 Instalação</h1>
+
+Clone o repositório:
+git clone https://github.com/JairSiqueiraJr/clicktech-helpdesk.git
+
+Entre no diretório:
+cd clicktech-helpdesk
+
+Crie um ambiente virtual:
+python -m venv .venv
+
+Ative o ambiente virtual no Windows:
+.venv\Scripts\activate
+
+Instale as dependências:
+pip install -r requirements.txt
+
+Configure as variáveis de ambiente no arquivo:
+.env
+
+Execute a aplicação:
+uvicorn app.main:app --reload
+
+A documentação da API poderá ser acessada através do Swagger:
+/docs
+
+<h1>🧪 Testes</h1>
+
+O projeto será estruturado para utilizar testes automatizados.
+
+Tecnologia planejada:
+Pytest
+
+Os testes deverão contemplar:
+
+Endpoints;
+Regras de negócio;
+Autenticação;
+CRUD;
+Alterações de status;
+Histórico;
+Consultas.
