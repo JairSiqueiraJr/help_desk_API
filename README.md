@@ -2,7 +2,8 @@
 Sistema de gerenciamento de chamados de suporte técnico desenvolvido com foco em simular um ambiente real de Help Desk corporativo.
 
 O projeto tem como objetivo aplicar, na prática, conceitos de desenvolvimento de software, APIs, bancos de dados, gerenciamento de chamados, rastreamento de eventos e análise de dados.
-📌 Projeto em desenvolvimento contínuo, com novas funcionalidades e tecnologias planejadas para as próximas etapas.
+
+> 📌 Projeto em desenvolvimento contínuo, com novas funcionalidades e tecnologias planejadas para as próximas etapas.
 
 ---
 
@@ -407,7 +408,7 @@ O projeto será estruturado para utilizar testes automatizados.
 Tecnologia planejada:
 Pytest
 
-Os testes deverão contemplar:
+<h1>Os testes deverão contemplar:</h1>
 
 Endpoints;
 Regras de negócio;
@@ -416,3 +417,101 @@ CRUD;
 Alterações de status;
 Histórico;
 Consultas.
+
+
+<h1>📈 Roadmap</h1>
+<h2>Fase 1 — Banco de dados</h2>
+ Estrutura inicial de chamados
+ Status
+ Histórico de status
+ Trigger para alterações de status
+ Usuários
+ Técnicos
+ Relacionamentos
+<h2>Fase 2 — Backend</h2>
+ Estrutura FastAPI
+ Models
+ Schemas
+ CRUD
+ Services
+ Endpoints
+ Tratamento de erros
+<h2>Fase 3 — Segurança</h2>
+ Cadastro
+ Login
+ JWT
+ Controle de permissões
+<h2>Fase 4 — Interface</h2>
+ Frontend
+ Dashboard
+ Gestão de chamados
+ Gestão de usuários
+<h2>Fase 5 — Dados</h2>
+ Consultas analíticas
+ Indicadores
+ SLA
+ Power BI
+<h2>Fase 6 — Infraestrutura</h2>
+ Docker
+ CI/CD
+ GitHub Actions
+ Deploy
+ Cloud
+
+
+ <h1>🎓 Objetivo profissional do projeto</h1>
+
+O ClickTech HelpDesk também representa um projeto de aprendizado prático em engenharia de software.
+
+Através dele são aplicados conceitos relacionados a:
+
+Desenvolvimento Backend;
+APIs REST;
+Banco de dados;
+SQL;
+Modelagem de dados;
+Arquitetura de software;
+Controle de versão;
+Containers;
+Segurança;
+Análise de dados;
+Business Intelligence;
+Cloud Computing.
+
+O objetivo é evoluir continuamente a aplicação, aproximando sua arquitetura e funcionalidades de um sistema utilizado em um ambiente corporativo real.
+
+
+<h1>👨‍💻 Autor
+Jair Siqueira Junior</h1>
+
+Estudante de Análise e Desenvolvimento de Sistemas e profissional com experiência em suporte técnico, atualmente direcionando sua carreira para desenvolvimento de software, backend, dados e cloud.
+
+Contatos
+
+💼 LinkedIn:
+Jair Siqueira | LinkedIn
+
+💻 GitHub:
+JairSiqueiraJr — GitHub
+
+<h1>📄 Licença</h1>
+
+Este projeto está em desenvolvimento para fins de aprendizado, portfólio e demonstração técnica.
+
+A licença definitiva será definida conforme a evolução do projeto.
+
+⭐ Se este projeto for útil para você, considere deixar uma estrela no repositório!
+
+### Uma mudança importante que fiz
+
+Eu **não colocaria no README que todas essas tecnologias já estão implementadas**. Isso é importante para sua credibilidade em entrevistas.
+
+Por exemplo, o histórico de status e trigger que **já construímos** pode ser marcado como `[x]`, enquanto FastAPI, Docker, React, AWS etc. ficam como `[ ]` até realmente entrarem no projeto.
+
+Isso permite que, em uma entrevista, você consiga dizer:
+
+> **"O ClickTech HelpDesk está sendo desenvolvido incrementalmente. A primeira etapa foi a modelagem do banco e controle do ciclo de vida dos chamados. A próxima etapa é transformar essa estrutura em uma API REST com FastAPI."**
+
+Essa narrativa é **muito mais forte** do que apresentar um README dizendo que você domina 20 tecnologias que ainda não implementou.
+
+E, principalmente, eu manteria o **ClickTech HelpDesk como o projeto principal do seu portfólio**, enquanto avançamos nele de verdade.
